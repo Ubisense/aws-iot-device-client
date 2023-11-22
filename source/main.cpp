@@ -60,6 +60,10 @@
 
 #endif
 
+#if !defined(EXCLUDE_EXTERNAL_FEATURE)
+#    include "external-feature/ExternalFeature.h"
+#endif
+
 #include <csignal>
 #include <memory>
 #include <thread>
@@ -91,6 +95,9 @@ using namespace Aws::Iot::DeviceClient::Shadow;
 #endif
 #if !defined(EXCLUDE_SENSOR_PUBLISH)
 using namespace Aws::Iot::DeviceClient::SensorPublish;
+#endif
+#if !defined(EXCLUDE_EXTERNAL_FEATURE)
+using namespace Aws::Iot::DeviceClient::External;
 #endif
 
 constexpr char TAG[] = "Main.cpp";
@@ -621,6 +628,15 @@ int main(int argc, char *argv[])
             EXIT_FAILURE);
     }
 #endif
+
+#if !defined(EXCLUDE_EXTERNAL_FEATURE)
+    shared_ptr<ExternalFeature> externalFeature;
+    LOG_INFO(TAG, "External feature is enabled");
+    externalFeature = make_shared<ExternalFeature>();
+    externalFeature->init(resourceManager, listener, config.config);
+    features->add(externalFeature->getName(), externalFeature);
+#endif
+
 
     resourceManager->startDeviceClientFeatures();
 

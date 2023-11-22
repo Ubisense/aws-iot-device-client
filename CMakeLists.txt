@@ -18,6 +18,7 @@ option(EXCLUDE_SECURE_ELEMENT "Builds the device client without the support for 
 option(EXCLUDE_SENSOR_PUBLISH "Builds the device client without the Sensor Publish over MQTT Feature." OFF)
 option(EXCLUDE_SENSOR_PUBLISH_SAMPLES "Builds the device client without the Sensor Publish sample servers." OFF)
 option(GIT_VERSION "Updates the version number using the Git commit history" ON)
+option(EXCLUDE_EXTERNAL_FEATURE "Exclude external feature library" ON)
 
 if (EXCLUDE_JOBS)
     add_definitions(-DEXCLUDE_JOBS)
@@ -70,6 +71,10 @@ endif()
 if (EXCLUDE_SENSOR_PUBLISH_SAMPLES)
     add_definitions(-DEXCLUDE_SENSOR_PUBLISH_SAMPLES)
 endif()
+
+if (EXCLUDE_EXTERNAL_FEATURE)
+    add_definitions(-DEXCLUDE_EXTERNAL_FEATURE)
+endif ()
 
 list(APPEND CMAKE_MODULE_PATH "./sdk-cpp-workspace/lib/cmake")
 
@@ -233,6 +238,10 @@ endif ()
 
 if (NOT EXCLUDE_SHADOW)
     set(DEP_DC_LIBS ${DEP_DC_LIBS} IotShadow-cpp)
+endif ()
+
+if (NOT EXCLUDE_EXTERNAL_FEATURE)
+    set(DEP_DC_LIBS ${DEP_DC_LIBS} LibExternalFeature)
 endif ()
 
 target_link_libraries(${DC_PROJECT_NAME} ${DEP_DC_LIBS})
